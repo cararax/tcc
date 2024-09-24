@@ -1,0 +1,195 @@
+% % \documentclass{article}
+% % \usepackage[utf8]{inputenc}
+
+% % \begin{document}
+
+% % \title{Microsserviços e Bancos de Dados: Desafios e Soluções na Era da Computação Distribuída}
+% % \author{}
+% % \date{}
+% % \maketitle
+
+% \chapter{Introdução}
+
+% \section{Contextualização}
+
+% A evolução dos sistemas de software ao longo das últimas décadas tem sido marcada por uma crescente complexidade e pela necessidade de maior flexibilidade e escalabilidade. Tradicionalmente, os sistemas monolíticos dominavam o cenário, caracterizados por uma única base de código e uma forte interdependência entre seus componentes. Contudo, com o aumento da demanda por desenvolvimento ágil e resposta rápida às mudanças do mercado, a arquitetura de microsserviços emergiu como uma alternativa eficaz.
+
+% \par Microsserviços são uma abordagem arquitetônica que estrutura uma aplicação como um conjunto de serviços pequenos e independentes, cada um executando uma funcionalidade específica. Essa abordagem permite que diferentes partes da aplicação sejam desenvolvidas, implantadas e escaladas de forma independente, promovendo uma maior agilidade e resiliência do sistema \cite{newman2019}.
+
+% Nesse contexto, os bancos de dados desempenham um papel crucial. Eles são responsáveis pelo armazenamento e recuperação dos dados que suportam as operações dos microsserviços. A transição para uma arquitetura de microsserviços implica em novos desafios para a gestão dos dados, uma vez que a abordagem tradicional de um único banco de dados centralizado pode não ser adequada para a natureza distribuída e independente dos microsserviços \cite{richardson2018}.
+
+% \section{Problema ou Questão de Pesquisa}
+
+% A integração de bancos de dados com arquiteturas de microsserviços apresenta uma série de desafios significativos. Entre eles, destacam-se a necessidade de garantir a consistência dos dados, a manutenção da disponibilidade e a adequação do particionamento dos dados. Esses desafios são exacerbados pela natureza distribuída dos microsserviços, onde cada serviço pode ter suas próprias necessidades de dados e requisitos de performance.
+
+% Portanto, a questão central desta pesquisa é: Quais são os principais desafios enfrentados na integração de bancos de dados com arquiteturas de microsserviços e quais são as soluções mais eficazes para superá-los? Especificamente, a pesquisa busca responder como garantir a consistência, a disponibilidade e o particionamento adequado dos dados em um ambiente de microsserviços.
+
+% E COMO OS PATTERNS PODEM AJUDAR A SOLUCIONAR
+
+% \section{Relevância do Tema}
+
+% A arquitetura de microsserviços tem se tornado cada vez mais relevante no desenvolvimento moderno de software devido à sua capacidade de proporcionar maior flexibilidade, escalabilidade e resiliência. Empresas de diferentes setores têm adotado essa abordagem para melhorar a eficiência de seus processos de desenvolvimento e operação de software \cite{pautasso2017}.
+
+% No entanto, a transição para microsserviços também traz desafios significativos, especialmente no que diz respeito à gestão de dados. Soluções inadequadas podem levar a problemas de desempenho, inconsistências de dados e dificuldades de manutenção, comprometendo os benefícios esperados da arquitetura de microsserviços. Portanto, a pesquisa de soluções eficazes para esses desafios é de extrema importância para a prática da engenharia de software.
+
+% \section{Objetivos do Trabalho}
+
+% Os objetivos deste trabalhoswwwww são:
+
+% \begin{enumerate}
+%     \item Analisar os principais desafios na integração de bancos de dados com arquiteturas de microsserviços, com foco em consistência, disponibilidade e particionamento de dados.
+%     \item Explorar soluções inovadoras e práticas recomendadas para superar esses desafios, utilizando padrões de design (patterns) específicos e tecnologias emergentes.
+% \end{enumerate}
+
+% Esses objetivos serão alcançados por meio de uma revisão extensa da literatura existente, estudos de caso e a análise de práticas e tecnologias atuais, proporcionando uma base sólida para a implementação de soluções eficazes em diferentes cenários de aplicação.
+
+% \chapter{Revisão da Literatura}
+
+% \section{Arquitetura de Microsserviços}
+
+% A arquitetura de microsserviços é uma abordagem moderna para o desenvolvimento de software que tem como objetivo a criação de aplicações compostas por serviços pequenos e independentes. Cada serviço é responsável por uma funcionalidade específica e pode ser desenvolvido, implantado e escalado de maneira autônoma. Essa arquitetura contrasta com a tradicional arquitetura monolítica, onde todas as funcionalidades de uma aplicação são desenvolvidas e implantadas como uma única unidade.
+
+% Os princípios fundamentais dos microsserviços incluem a independência dos serviços, a descentralização do controle e a automação de processos de implantação. Essa independência permite que diferentes equipes trabalhem em serviços distintos, utilizando tecnologias e linguagens de programação adequadas às suas necessidades específicas \cite{newman2019}. Além disso, a arquitetura de microsserviços facilita a escalabilidade horizontal, pois novos serviços podem ser adicionados sem a necessidade de alterar o sistema como um todo.
+
+% No entanto, a adoção de microsserviços também traz desvantagens. A complexidade do sistema pode aumentar significativamente devido à necessidade de gerenciar múltiplos serviços e suas interações. Problemas de latência e falhas de comunicação entre serviços são desafios comuns. Além disso, a necessidade de implementar mecanismos de controle de versão e gerenciamento de dados distribuídos pode complicar ainda mais o desenvolvimento e a manutenção \cite{fowler2011}.
+
+% \section{Bancos de Dados em Sistemas Distribuídos}
+
+% Os bancos de dados desempenham um papel crucial na arquitetura de microsserviços, sendo responsáveis pelo armazenamento e recuperação dos dados necessários para o funcionamento dos serviços. Existem dois tipos principais de bancos de dados utilizados em sistemas distribuídos: relacionais e NoSQL.
+
+% Os bancos de dados relacionais, como MySQL e PostgreSQL, utilizam um modelo de dados estruturado baseado em tabelas e garantem transações ACID (Atomicidade, Consistência, Isolamento e Durabilidade). Eles são amplamente utilizados devido à sua maturidade, robustez e suporte a transações complexas. No entanto, a escalabilidade horizontal de bancos de dados relacionais pode ser limitada, especialmente em ambientes de microsserviços \cite{brewer2000}.
+
+% Por outro lado, os bancos de dados NoSQL, como MongoDB e Cassandra, foram desenvolvidos para lidar com grandes volumes de dados e proporcionar escalabilidade horizontal. Eles utilizam modelos de dados flexíveis e podem operar de maneira eficiente em ambientes distribuídos. No entanto, os bancos de dados NoSQL geralmente oferecem consistência eventual, o que pode ser um desafio para aplicações que requerem consistência forte \cite{vogels2009}.
+
+% \section{Consistência e Disponibilidade}
+
+% O teorema CAP (Consistência, Disponibilidade e Tolerância a Partições), proposto por Eric Brewer, afirma que é impossível para um sistema distribuído garantir simultaneamente os três aspectos: consistência, disponibilidade e tolerância a partições. Em outras palavras, um sistema pode garantir apenas dois desses três atributos ao mesmo tempo \cite{brewer2000}. Essa limitação é particularmente relevante para a arquitetura de microsserviços, onde a comunicação entre serviços distribuídos é essencial.
+
+% Existem dois modelos principais de consistência utilizados em sistemas distribuídos: ACID e BASE (Basically Available, Soft State, Eventually Consistent). O modelo ACID é amplamente utilizado em bancos de dados relacionais e garante transações consistentes e isoladas. Já o modelo BASE é mais comum em bancos de dados NoSQL e prioriza a disponibilidade e a tolerância a partições, oferecendo consistência eventual. A escolha entre ACID e BASE depende dos requisitos específicos da aplicação e do contexto em que ela opera \cite{vogels2009}.
+
+% \section{Desafios na Integração de Microsserviços com Bancos de Dados}
+
+% A integração de bancos de dados com arquiteturas de microsserviços apresenta diversos desafios. O particionamento de dados é um dos principais, pois envolve a divisão do banco de dados em partes menores (shards) para melhorar a escalabilidade e a performance. Essa abordagem, conhecida como sharding, pode ser complexa de implementar e gerenciar \cite{newman2019}.
+
+% A consistência transacional é outro desafio significativo. Em um ambiente distribuído, garantir que todas as transações sejam processadas de forma consistente sem comprometer a disponibilidade pode ser complicado. Soluções como o padrão Sagas, que gerencia transações distribuídas por meio de uma série de transações locais com compensações, são frequentemente utilizadas para mitigar esse problema \cite{richardson2018}.
+
+% O gerenciamento de schema e versionamento também é crucial. Alterações no schema do banco de dados devem ser implementadas de maneira que não causem interrupções nos serviços. O padrão CQRS (Command Query Responsibility Segregation), que separa as operações de leitura e escrita em modelos diferentes, é uma estratégia que pode ajudar a gerenciar essas mudanças de forma eficiente \cite{fowler2011}.
+
+% Esses desafios e soluções serão explorados detalhadamente ao longo deste trabalho, fornecendo um guia prático para a integração eficaz de bancos de dados em arquiteturas de microsserviços.
+
+
+% \chapter{Desafios na Integração de Bancos de Dados com Microsserviços}
+
+% A integração de bancos de dados com microsserviços apresenta diversos desafios críticos para a eficiência e funcionalidade de sistemas distribuídos. A seguir, são detalhados os principais desafios enfrentados nesta integração, exemplificados com aplicações reais onde tais problemas podem ocorrer e discussões aprofundadas sobre \textit{patterns} que podem ajudar a resolvê-los.
+
+% \section{Desafio 1: Particionamento e Escalabilidade}
+
+% Em ambientes de microsserviços, o particionamento de dados, ou \textit{sharding}, é essencial para lidar com grandes volumes de dados e garantir a escalabilidade. O particionamento divide um banco de dados em partes menores e independentes chamadas \textit{shards}. Cada \textit{shard} pode ser hospedado em um servidor diferente, permitindo que o sistema distribua a carga de trabalho e melhore o desempenho.
+
+
+% O principal desafio no particionamento de dados é garantir que os dados sejam distribuídos de maneira eficiente para manter a performance do sistema. Além disso, a complexidade do gerenciamento de \textit{shards} aumenta, exigindo uma estratégia robusta para balanceamento de carga e recuperação de falhas. A manutenção de consultas distribuídas, que podem envolver múltiplos \textit{shards}, também se torna mais complexa.
+
+% \begin{itemize}
+%     \item Distribuição Ineficiente de Dados: A má distribuição de dados entre \textit{shards} pode levar a problemas de desempenho, onde alguns \textit{shards} são sobrecarregados enquanto outros ficam subutilizados.
+%     \item Gerenciamento Complexo de Shards: A complexidade do gerenciamento de \textit{shards} aumenta, exigindo estratégias robustas para balanceamento de carga, recuperação de falhas e manutenção de consultas distribuídas.
+%     \item Consultas Distribuídas: Manter consultas distribuídas eficientes, que envolvem múltiplos \textit{shards}, pode ser desafiador, especialmente quando os dados estão espalhados de forma desigual.
+% \end{itemize}
+
+% \subsection{Exemplos de Aplicação}
+
+% \begin{itemize}
+%     \item Redes Sociais: Plataformas como Facebook e Twitter gerenciam volumes massivos de dados de usuários e interações. Por exemplo, o Facebook precisa distribuir dados de bilhões de usuários e suas conexões para garantir que as interações e atualizações sejam rápidas e eficientes.
+%     \item Grandes Plataformas de Dados: Sistemas como Amazon e Google utilizam particionamento para gerenciar dados de produtos, transações e usuários, garantindo escalabilidade à medida que a quantidade de dados cresce exponencialmente. A Amazon, por exemplo, deve garantir que suas consultas de produto e histórico de compras sejam rápidas e responsivas para milhões de usuários simultâneos.
+% \end{itemize}
+
+% \subsection{Pattern: Database Sharding}
+
+% O \textit{Database Sharding} divide um banco de dados grande em vários bancos de dados menores, chamados \textit{shards}. Cada \textit{shard} é uma cópia completa do banco de dados, contendo apenas uma parte dos dados totais. O \textit{sharding} pode ser feito com base em vários critérios, como a faixa de IDs dos dados, geolocalização dos usuários ou qualquer outra métrica que distribua os dados de maneira uniforme.
+
+% \begin{itemize}
+%     \item Divisão dos Dados: Os dados são particionados com base em um esquema de \textit{sharding}, que pode ser determinado por uma chave de particionamento. Por exemplo, em um sistema de e-commerce, os dados podem ser particionados por região geográfica ou por ID de usuário.
+%     \item Distribuição de Shards: Cada \textit{shard} é armazenado em um servidor diferente, permitindo que a carga de trabalho seja distribuída e reduzindo a pressão sobre qualquer servidor individual.
+%     \item Balanceamento de Carga: Um balanceador de carga é usado para direcionar as solicitações para o \textit{shard} apropriado, garantindo que as consultas sejam eficientes e que os dados sejam acessados rapidamente.
+%     \item Recuperação de Falhas: Em caso de falha de um \textit{shard}, os dados podem ser redistribuídos entre os \textit{shards} restantes, garantindo que o sistema continue a funcionar.
+% \end{itemize}
+
+
+% \section{Consistência e Transações Distribuídas}
+
+% Manter a consistência dos dados em um ambiente distribuído é um dos maiores desafios enfrentados na integração de microsserviços com bancos de dados. Em sistemas distribuídos, garantir que todas as transações sejam processadas de forma consistente e sem comprometer a disponibilidade é essencial para a integridade dos dados.
+
+% % \subsection{Desafios}
+
+% A natureza distribuída dos microsserviços implica que uma transação pode envolver múltiplos serviços e bancos de dados. Garantir a consistência em tais cenários é complicado, especialmente quando se tenta evitar a complexidade do protocolo de \textit{Two-Phase Commit} (2PC). Problemas como a latência de rede, falhas parciais e a necessidade de compensações tornam a consistência um desafio contínuo.
+
+% \begin{itemize}
+%     \item Latência de Rede: A comunicação entre serviços distribuídos pode introduzir latências que dificultam a sincronização de dados em tempo real.
+%     \item Falhas Parciais: Falhas em um ou mais serviços durante uma transação podem deixar o sistema em um estado inconsistente.
+%     \item Compensações Complexas: Implementar mecanismos de compensação para reverter transações falhadas pode ser complicado e propenso a erros.
+% \end{itemize}
+
+% \subsection{Exemplos de Aplicação}
+
+% \begin{itemize}
+%     \item Processos de Reserva de Viagens: Sistemas de reserva de voos e hotéis, como Expedia e Booking.com, precisam garantir que todas as partes da transação (reserva de voo, hotel e aluguel de carro) sejam consistentes e confirmadas ou revertidas em caso de falha. Por exemplo, se uma reserva de voo falhar após a confirmação de um hotel, o sistema deve reverter a reserva do hotel para evitar inconsistências.
+%     \item Sistemas de Banco de Dados Distribuídos: Bancos e plataformas de pagamento, como PayPal, exigem que todas as transações financeiras sejam consistentes, mesmo quando distribuídas entre múltiplos serviços. Qualquer falha em garantir a consistência pode resultar em problemas sérios, como saldo incorreto na conta dos usuários.
+% \end{itemize}
+
+% \subsection{Pattern: Sagas}
+
+% Como Funciona
+
+% O \textit{pattern} Sagas gerencia transações distribuídas por meio de uma série de transações locais, cada uma com uma operação de compensação correspondente. Em vez de usar um único ponto de controle, como no 2PC, as sagas são compostas por uma sequência de passos que podem ser desfeitos em caso de falha.
+
+% \begin{itemize}
+%     \item Divisão em Passos: Uma saga divide uma transação global em várias transações locais que podem ser completadas independentemente.
+%     \item Operações de Compensação: Para cada transação local, é definida uma operação de compensação que reverte a transação em caso de falha.
+%     \item Execução Sequencial: As transações locais são executadas sequencialmente. Se uma transação falhar, as operações de compensação são invocadas para desfazer as transações já realizadas.
+%     \item Coordenação: Um orquestrador ou coreógrafo coordena a execução das sagas, garantindo que todas as etapas sejam completadas ou compensadas em caso de falha.
+% \end{itemize}
+
+% Solução para o Problema:
+
+% \begin{itemize}
+%     \item Redução da Complexidade: Evita a complexidade do 2PC, que pode ser difícil de implementar e manter em sistemas distribuídos.
+%     \item Resiliência: A capacidade de desfazer passos intermediários em caso de falha aumenta a resiliência do sistema.
+%     \item Descentralização: Permite que cada serviço gerencie suas próprias transações locais, facilitando a escalabilidade e a manutenção.
+% \end{itemize}
+
+% \section{Gerenciamento de Esquema e Versionamento}
+% todo: traduzier schema para esquema
+% A evolução contínua dos serviços em um ambiente de microsserviços exige um gerenciamento eficiente do schema dos bancos de dados. As mudanças no schema são inevitáveis à medida que os serviços evoluem, e garantir que essas mudanças não causem interrupções nos serviços é um desafio significativo.
+
+% O gerenciamento de schema em bancos de dados distribuídos requer estratégias que permitam a evolução do schema sem impactar negativamente a operação dos serviços existentes. As principais dificuldades incluem a necessidade de versionamento de schema, migração de dados sem \textit{downtime} e a manutenção da compatibilidade entre diferentes versões dos serviços.
+
+% \subsection{Exemplos de Aplicação}
+
+% \begin{itemize}
+%     \item Sistemas de E-commerce: Plataformas como Amazon precisam continuamente atualizar seus schemas de banco de dados para adicionar novas funcionalidades, como novos tipos de produtos ou melhorias no sistema de recomendação, sem interromper o serviço aos usuários. Por exemplo, adicionar uma nova categoria de produto requer uma atualização do schema sem afetar as operações em andamento.
+%     \item Plataformas de Mídia Social: Redes como LinkedIn devem gerenciar alterações no schema para acomodar novas funcionalidades de interação e dados de usuários, garantindo que essas mudanças sejam compatíveis com as versões anteriores do serviço. Por exemplo, adicionar novas formas de interação entre usuários requer uma atualização do schema e garantias de que versões antigas ainda funcionem corretamente.
+% \end{itemize}
+
+% \subsection{Pattern: Command Query Responsibility Segregation (CQRS)}
+
+% Como Funciona:
+
+% CQRS separa as operações de leitura e escrita em modelos diferentes. O modelo de comando (\textit{write model}) é responsável por lidar com a lógica de negócios e mudanças no estado, enquanto o modelo de consulta (\textit{read model}) é otimizado para consultas e leitura de dados. Essa separação permite otimizar cada modelo para suas respectivas operações, melhorando a performance e facilitando a escalabilidade.
+
+% \begin{itemize}
+%     \item Separação de Modelos: As operações de comando e consulta são separadas em diferentes modelos de dados. O modelo de comando trata das atualizações e mudanças de estado, enquanto o modelo de consulta é otimizado para leitura de dados.
+%     \item Sincronização de Dados: O modelo de comando e o modelo de consulta são sincronizados por meio de eventos. Quando uma alteração é feita no modelo de comando, um evento é gerado e propagado para o modelo de consulta, que é atualizado em conformidade.
+%     \item Escalabilidade Independente: Cada modelo pode ser escalado de forma independente, permitindo que as operações de leitura e escrita sejam otimizadas e escaladas conforme necessário.
+%     \item Facilidade de Versionamento: As mudanças no modelo de comando não afetam diretamente o modelo de consulta, facilitando o gerenciamento de versões diferentes do schema.
+% \end{itemize}
+
+% Solução para o Problema:
+
+% \begin{itemize}
+%     \item Desempenho Otimizado: Ao separar as operações de leitura e escrita, CQRS permite que cada modelo seja otimizado para seu propósito específico, melhorando a performance geral do sistema.
+%     \item Escalabilidade: Facilita a escalabilidade, permitindo que as operações de leitura e escrita sejam escaladas de forma independente.
+%     \item Gestão de Schema: Simplifica a gestão de schema e versionamento, permitindo que mudanças no modelo de comando não afetem diretamente o modelo de consulta.
+% \end{itemize}
+
+% posso trazer os desafios e depois os padrões, e referenciar
+
+
