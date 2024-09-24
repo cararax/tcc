@@ -85,7 +85,7 @@ As desvantagens da arquitetura de microsserviços incluem:
 \begin{enumerate}
     \item \textbf{Complexidade de Comunicação:} A gestão da comunicação entre serviços requer mecanismos sofisticados de orquestração e descoberta de serviços. Implementar e gerenciar essas comunicações pode introduzir complexidade adicional ao sistema \cite{dragoni2017}.
     \item \textbf{Consistência de Dados:} Manter a consistência de dados em um sistema distribuído é um desafio, especialmente com a necessidade de gerenciar a consistência eventual. Serviços que precisam de dados consistentes podem enfrentar dificuldades adicionais \cite{richardson2018}.
-    \item \textbf{Sobrecarga Operacional:} Cada serviço necessita de seu próprio ciclo de vida de desenvolvimento e implantação, o que pode aumentar a sobrecarga operacional. Isso inclui o gerenciamento de pipelines de CI/CD, monitoramento e logs para cada serviço individualmente \cite{fowler2014}.
+    \item \textbf{Sobrecarga Operacional:} Cada serviço necessita de seu próprio ciclo de vida de desenvolvimento e implantação, o que pode aumentar a sobrecarga operacional. Isso inclui o gerenciamento de pipelines de CI/CD (Integração Contínua/Entrega Contínua, um conjunto de práticas que automatizam o processo de construção, teste e implantação de software), monitoramento e logs para cada serviço individualmente \cite{fowler2014}. A implementação e manutenção de múltiplos pipelines de CI/CD pode ser complexa e consumir recursos significativos.
     \item \textbf{Gestão de Falhas:} A detecção e recuperação de falhas em um ambiente distribuído são mais complexas e exigem estratégias robustas de tolerância a falhas. A implementação de padrões como Circuit Breaker e Retry pode ser necessária para garantir a resiliência do sistema \cite{newman2019}.
 \end{enumerate}
 
@@ -158,7 +158,7 @@ Os bancos de dados NoSQL geralmente adotam o modelo BASE, que oferece uma aborda
 Os bancos de dados NoSQL muitas vezes adotam o modelo BASE, que é um acrônimo para (Basically Available Soft State Eventual Consistency:
 
 \begin{enumerate}
-    \item \textbf{Basicamente Disponível (Basically Available):} O sistema garante a disponibilidade básica dos dados, mesmo em caso de falhas parciais do sistema.
+    \item \textbf{Basicamente Disponível (Basically Available):} O sistema garante que todas as solicitações recebam uma resposta, mesmo que algumas partes do sistema estejam indisponíveis. Isso significa que o sistema continua operacional, priorizando a disponibilidade sobre a consistência completa dos dados em caso de falhas parciais. As respostas podem ser parciais ou incluir dados desatualizados, mas o sistema permanece funcional e responsivo \cite{pritchett2008}.
     \item \textbf{Estado Soft (Soft State):} O estado do sistema pode mudar ao longo do tempo, mesmo sem novas entradas, devido à consistência eventual.
     \item \textbf{Consistência Eventual (Eventual Consistency):} O sistema garantirá a consistência dos dados em algum ponto no futuro, desde que não ocorram novas atualizações. Isso é uma abordagem mais relaxada comparada à consistência imediata dos bancos de dados ACID \cite{vogels2009}.
 \end{enumerate}
@@ -249,8 +249,7 @@ Um sistema que prioriza Consistência e Tolerância à Partição não pode gara
 
 Um sistema que prioriza Disponibilidade e Tolerância à Partição não pode garantir consistência imediata. Isso significa que, em caso de falha de rede, o sistema continuará a operar, mas pode apresentar dados inconsistentes temporariamente.
 
-\textbf{Exemplo Prático AP:} No sistema fictício de reserva de passagens de ônibus, um sistema AP garantiria que os clientes possam fazer reservas mesmo durante falhas de rede. Se os servidores em São Paulo e Rio de Janeiro não puderem se comunicar, ambos os servidores continuarão a aceitar reservas. Isso pode resultar em um estado onde o mesmo assento é reservado para dois clientes diferentes. No entanto, uma vez que a rede seja restaurada, o sistema resolverá essas inconsistências, possivelmente através de um processo de reconciliação. Isso é ideal para sistemas onde a disponibilidade e a capacidade de operação contínua são mais importantes do que a consistência imediata dos dados, como em redes sociais ou portais de notícias.
-
+\textbf{Exemplo Prático AP:} No sistema fictício de reserva de passagens de ônibus, um sistema AP garantiria que os clientes possam fazer reservas mesmo durante falhas de rede. Se os servidores em São Paulo e Rio de Janeiro não puderem se comunicar, ambos os servidores continuarão a aceitar reservas. Isso pode resultar em um estado onde o mesmo assento é reservado para dois clientes diferentes. No entanto, uma vez que a rede seja restaurada, a aplicação resolverá essas inconsistências, possivelmente através de um processo de reconciliação implementado na camada de lógica de negócios. O banco de dados, neste caso, serve apenas como um repositório de dados, enquanto a aplicação é responsável por detectar e resolver os conflitos. Isso é ideal para sistemas onde a disponibilidade e a capacidade de operação contínua são mais importantes do que a consistência imediata dos dados, como em redes sociais ou portais de notícias.
 
 
 \chapter{Desafios da Arquitetura de Microsserviços Relacionados à Consistência e Disponibilidade}
@@ -271,9 +270,7 @@ Além disso, a fragmentação de dados pode levar a problemas de integridade ref
 
 \subsection{Consistência Eventual}
 
-A consistência eventual é um modelo de consistência em sistemas distribuídos onde os dados eventualmente convergem para um estado consistente, desde que não ocorram novas atualizações. Este modelo sacrifica a consistência imediata para melhorar a disponibilidade e a tolerância a falhas.
-
-Nos sistemas distribuídos, a consistência eventual pode resultar em leituras temporariamente inconsistentes, onde diferentes serviços possuem visões divergentes dos dados. Esse comportamento pode ser problemático para operações que exigem uma consistência imediata, como transações financeiras ou reservas de recursos como passagens de ônibus ou quartos em hotéis. Por exemplo, em uma aplicação de reserva de passagens de ônibus, se as atualizações de disponibilidade de assentos não forem propagadas imediatamente para todos os serviços, dois clientes podem acabar reservando o mesmo assento, levando a conflitos e frustrações \cite{vogels2009}.
+A consistência eventual é um modelo em sistemas distribuídos onde os dados convergem para um estado consistente ao longo do tempo, sacrificando a consistência imediata em favor da disponibilidade e tolerância a falhas. Isso pode resultar em leituras temporariamente inconsistentes entre diferentes serviços, o que é problemático para operações que exigem consistência imediata, como transações financeiras ou reservas de recursos. Por exemplo, em uma aplicação de reserva de passagens de ônibus, atualizações não propagadas imediatamente podem levar a conflitos, como dois clientes reservando o mesmo assento \cite{vogels2009}.
 
 Além disso, a consistência eventual pode complicar o processo de reconciliação de dados, onde dados inconsistentes precisam ser verificados e sincronizados periodicamente. A reconciliação pode ser um processo complexo e intensivo, exigindo algoritmos sofisticados para resolver conflitos de maneira determinística.
 
@@ -293,7 +290,7 @@ A latência na propagação de atualizações pode levar a inconsistências temp
 
 Conflitos de escrita ocorrem quando múltiplos serviços tentam atualizar o mesmo dado simultaneamente, resultando em versões conflitantes do dado. Resolver esses conflitos é crucial para manter a integridade dos dados em sistemas distribuídos.
 
-Conflitos de escrita podem levar à perda de dados ou inconsistências se não forem resolvidos corretamente. A conciliação dos dados conflitantes pode ser complexa, especialmente quando envolve decisões de negócio. Por exemplo, em uma aplicação de reserva de passagens de ônibus, dois serviços podem tentar reservar o mesmo assento para diferentes clientes simultaneamente. Resolver esse conflito requer uma lógica de negócio clara para determinar qual reserva deve prevalecer e como notificar o cliente cuja reserva foi rejeitada \cite{vogels2009}.
+Conflitos de escrita podem levar à perda de dados ou inconsistências se não forem resolvidos corretamente. A conciliação dos dados conflitantes pode ser complexa, especialmente quando envolve decisões de negócio. Por exemplo, em uma aplicação de reserva de passagens de ônibus, dois serviços podem tentar reservar o mesmo assento para diferentes clientes simultaneamente. Resolver esse conflito requer que a aplicação implemente uma lógica de negócio clara para determinar qual reserva deve prevalecer e como notificar o cliente cuja reserva foi rejeitada. O banco de dados serve apenas como repositório de dados, enquanto a aplicação é responsável por detectar conflitos, aplicar regras de negócio e resolver as inconsistências \cite{vogels2009}.
 
 A conciliação de conflitos também pode introduzir latência adicional, impactando a experiência do usuário. Algoritmos de conciliação precisam ser eficientes e eficazes para resolver conflitos rapidamente, minimizando o impacto na operação do sistema. Ferramentas de gerenciamento de dados distribuídos, como Cassandra e Riak, oferecem suporte integrado para técnicas de resolução de conflitos, mas ainda exigem um planejamento cuidadoso e uma implementação robusta \cite{lakshman2010}.
 
@@ -303,9 +300,7 @@ A conciliação de conflitos também pode introduzir latência adicional, impact
 
 As falhas de rede são um dos desafios mais críticos em sistemas de microsserviços. Em um ambiente distribuído, os serviços dependem de uma comunicação constante e confiável entre si. No entanto, a rede pode ser imprevisível e sujeita a falhas. As falhas de rede podem interromper a comunicação entre serviços, resultando em tempo de inatividade e falhas de operação. Isso pode ser particularmente problemático em sistemas que requerem alta disponibilidade e desempenho consistente.
 
-Em um cenário de falha de rede, um serviço pode não conseguir acessar os dados ou serviços necessários para completar uma operação, levando a tempos de espera prolongados e possíveis falhas na execução de transações. Isso pode impactar negativamente a experiência do usuário, especialmente em aplicações críticas onde a disponibilidade contínua é essencial \cite{tanenbaum2007}.
-
-Além disso, as falhas de rede podem levar a problemas de consistência de dados, onde diferentes serviços têm visões divergentes do estado do sistema. A recuperação de falhas de rede exige mecanismos robustos de tolerância a falhas e recuperação automática, o que pode aumentar a complexidade do sistema \cite{brewer2000}.
+Em um cenário de falha de rede, um serviço pode enfrentar dificuldades para acessar dados ou serviços necessários, resultando em tempos de espera prolongados, falhas na execução de transações e problemas de consistência de dados. Isso pode impactar negativamente a experiência do usuário, especialmente em aplicações críticas, e exigir mecanismos robustos de tolerância a falhas e recuperação automática, aumentando a complexidade do sistema \cite{tanenbaum2007, brewer2000}.
 
 \subsection{Latência}
 
@@ -321,9 +316,9 @@ Implementar mecanismos eficazes de isolamento de falhas pode ser desafiador. Iss
 
 \chapter{Padrões de Arquitetura de Microsserviços}
 
-Este capítulo se dedica a explorar em profundidade os padrões de design e arquiteturas fundamentais para o desenvolvimento de sistemas distribuídos robustos e escaláveis, com foco especial em arquiteturas de microsserviços. Este capítulo apresenta uma análise detalhada de quatro padrões essenciais: Command Query Responsibility Segregation (CQRS), Saga, Circuit Breaker e Event Sourcing.
+Este capítulo se dedica a explorar os padrões de design e arquiteturas fundamentais para o desenvolvimento de sistemas distribuídos robustos e escaláveis, com foco especial em arquiteturas de microsserviços. Este capítulo apresenta uma análise detalhada de quatro padrões essenciais: Command Query Responsibility Segregation (CQRS), Saga, Circuit Breaker e Event Sourcing.
 
-Cada um desses padrões é examinado minuciosamente, explorando suas definições, princípios de funcionamento, vantagens e desvantagens. Além disso, o capítulo fornece exemplos práticos de implementação desses padrões no contexto de uma aplicação fictícia de reserva de passagens, ilustrando como esses conceitos podem ser aplicados em cenários do mundo real. Esta abordagem visa não apenas elucidar os aspectos teóricos desses padrões, mas também demonstrar sua aplicabilidade prática na resolução de desafios comuns em arquiteturas de microsserviços.
+Cada um desses padrões será explorado em detalhes, incluindo definições, princípios de funcionamento, vantagens e desvantagens. Além disso, o capítulo fornece exemplos práticos de implementação desses padrões no contexto de uma aplicação fictícia de reserva de passagens, ilustrando como esses conceitos podem ser aplicados em cenários do mundo real. Esta abordagem visa não apenas elucidar os aspectos teóricos desses padrões, mas também demonstrar sua aplicabilidade prática na resolução de desafios comuns em arquiteturas de microsserviços.
 
 \section{Definição de Padrões de Arquitetura}
 
@@ -421,7 +416,7 @@ No contexto dos microsserviços, CQRS pode ser implementado criando dois modelos
 
 \subsection{Saga}
 
-\textbf{Definição:} O padrão Saga é uma abordagem para gerenciar transações distribuídas em sistemas de microsserviços, garantindo a consistência de dados em ambientes onde transações ACID tradicionais não são viáveis. Uma Saga é uma sequência de transações que atualizam diferentes serviços. Se uma transação falhar, a Saga executa uma série de passos de compensação para desfazer as alterações feitas pelas transações anteriores. Uma Saga é uma longa atividade que pode ser dividida em um conjunto de transações menores e independentes, cada uma das quais pode ser compensada caso ocorra uma falha \cite{garcia-molina1987}.
+\textbf{Definição:} O padrão Saga é uma abordagem para gerenciar transações distribuídas em sistemas de microsserviços, garantindo a consistência de dados em ambientes onde transações ACID tradicionais não são viáveis. Uma Saga é uma sequência de transações que atualizam diferentes serviços. Geralmente garante atomicidade local para cada etapa e oferece consistência eventual. Se uma transação falhar, a Saga executa uma série de passos de compensação para desfazer as alterações feitas pelas transações anteriores. Uma Saga é uma longa atividade que pode ser dividida em um conjunto de transações menores e independentes, cada uma das quais pode ser compensada caso ocorra uma falha \cite{garcia-molina1987}.
 
 No contexto dos microsserviços, uma Saga permite que uma transação que abrange múltiplos serviços seja dividida em várias transações locais, cada uma das quais pode ser revertida de forma independente se necessário. Isso ajuda a manter a consistência dos dados sem a necessidade de uma transação global.
 
